@@ -85,7 +85,7 @@ def BindEvents(canvas):
 
     def RightUp(e):
         print(e.x, e.y)
-        return EventDo(struct.pack('>BBHH', 3, 100, int(e.x/scale), int(e.y/scale)))
+        return EventDo(struct.pack('>BBHH', 3, 117, int(e.x/scale), int(e.y/scale)))
 
     # 鼠标滚轮0,回滚 1,前滚
     def Wheel(e):
@@ -99,20 +99,20 @@ def BindEvents(canvas):
 
     # 键盘按下&起来
     def KeyDown(e):
-        print("KeyDown")
+        print("KeyDown", e.keycode)
         return EventDo(struct.pack('>BBHH', e.keycode, 100, int(e.x/scale), int(e.y/scale)))
     def KeyUp(e):
-        print("KeyUp")
+        print("KeyUp", e.keycode)
         return EventDo(struct.pack('BBHH', e.keycode, 117, int(e.x/scale), int(e.y/scale)))
 
     # 绑定所有事件到画布
     canvas.bind(sequence="<1>", func=LeftDown)
     canvas.bind(sequence="<ButtonRelease-1>", func=LeftUp)
     canvas.bind(sequence="<3>", func=RightDown)
-    canvas.bind(sequence="ButtonRelease-3", func=RightUp)
-    canvas.bind(sequence="MouseWheel", func=Wheel)
-    canvas.bind(sequence="KeyPress", func=KeyDown)
-    canvas.bind(sequence="KeyRelease", func=KeyUp)
+    canvas.bind(sequence="<ButtonRelease-3>", func=RightUp)
+    canvas.bind(sequence="<MouseWheel>", func=Wheel)
+    canvas.bind(sequence="<KeyPress>", func=KeyDown)
+    canvas.bind(sequence="<KeyRelease>", func=KeyUp)
 
 
 val = tkinter.StringVar()
@@ -130,7 +130,7 @@ sca.grid(row=1, column=1, padx=0, pady=0, ipadx=100, ipady=0)
 show_btn.grid(row=2, column=1, padx=0, pady=10, ipadx=30, ipady=0)
 
 sca.set(50)
-val.set("127.0.0.1:8888")
+val.set("192.168.179.130:8888")
 
 
 
@@ -153,9 +153,8 @@ def run():
     data = np.frombuffer(imb, dtype=np.uint8)
     img = cv2.imdecode(data, cv2.IMREAD_COLOR)
     h, w, _ = img.shape
-    print(h, w)
     fixh, fixw = h, w
-    imsh = cv2.cvtColor(img, cv2.COLOR_BGR2RGBA)
+    imsh = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
     imi = Image.fromarray(imsh)
     imgTK = ImageTk.PhotoImage(image=imi)
     tc = tkinter.Canvas(showcan, width=w, height=h, bg="white")
@@ -193,7 +192,7 @@ def run():
                 img = img + ims
 
             imt = cv2.resize(img, (w, h))
-            imsh = cv2.cvtColor(imt, cv2.COLOR_BGR2RGB)
+            imsh = cv2.cvtColor(imt, cv2.COLOR_RGB2BGR)
             imi = Image.fromarray(imsh)
             imgTK.paste(imi)
         except:

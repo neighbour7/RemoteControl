@@ -195,11 +195,7 @@ def ctrl(conn):
                 mouse.move(ox,oy)
                 mouse.press(button=mouse.LEFT)
             elif op == 117:
-                x, y = mouse.get_position()
-                if ox != x or oy !=y:
-                    if not mouse.is_pressed():
-                        mouse.press(button=mouse.LEFT)
-                    mouse.move(ox, oy)
+                mouse.move(ox, oy)
                 mouse.release(button=mouse.LEFT)
         elif key == 2:
             if op == 0:
@@ -214,9 +210,9 @@ def ctrl(conn):
                 mouse.press(button=mouse.RIGHT)
             elif op == 117:
                 mouse.move(ox, oy)
-                mouse.move(button=mouse.RIGHT)
+                mouse.release(button=mouse.RIGHT)
         else:
-            k = official_virtual_keys(key)
+            k = official_virtual_keys.get(key)
             if k is not None:
                 if op == 100:
                     keyboard.press(k)
@@ -234,7 +230,7 @@ def ctrl(conn):
             op = cmd[1]
             x = struct.unpack(">H", cmd[2:4])[0]
             y = struct.unpack(">H", cmd[4:6])[0]
-            print(key,x, y)
+
             Op(key, op, x, y)
     except:
         return
@@ -257,7 +253,7 @@ def handle(conn):
     conn.sendall(lenb)  # 发送数据长度
     conn.sendall(imbyt)   # 发送数据
     while True:
-        cv2.waitKey(100)
+        cv2.waitKey(20)
         gb = ImageGrab.grab()
         imgnpn = np.asarray(gb)
         _, timbyt = cv2.imencode(".jpg", imgnpn, [cv2.IMWRITE_JPEG_QUALITY, IMQUALITY])
